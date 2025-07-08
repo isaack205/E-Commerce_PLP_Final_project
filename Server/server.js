@@ -1,9 +1,9 @@
 // Import modules
 require('dotenv').config();
 const express = require('express');
-const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const logger = require('./middlewares/customLogger')
 const connectDB = require('./config/db');
 
 
@@ -13,10 +13,10 @@ const app = express();
 app.use(express.json()); // Parse json bodies
 app.use(cors()); // Midddleware that establishes connection to frontend
 app.use(helmet()); // Security middleware
-app.use(morgan('combined')); //Logging information
+app.use(logger); // Logging information
 
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000; // Load from env
 // connect database
 connectDB()
 .then(() => {
