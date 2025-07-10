@@ -9,14 +9,14 @@ function generateSKU(brand, category, id, variant) {
 // ProductSchema
 const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    description: { type: String, maxlength: 100 },
+    description: { type: String, maxlength: 100, default: null },
     price: { type: Number, required: true, min: [0, 'Price cannot be a negative'] },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     image: { type: String, default: 'default-post.jpg' },
     brand: { type: String }, // Add brand if needed
     variant: { type: String }, // Add variant if needed
     sku: { type: String, unique: true },
-    stockQuantity: { type: Number, default: 0, min: [0, 'Stock quantity cannot be negative'] }
+    stockQuantity: { type: Number, default: 0, min: [0, 'Stock quantity cannot be negative'], required: true }
 },
 { timestamps: true }
 );

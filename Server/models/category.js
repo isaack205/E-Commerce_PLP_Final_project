@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // Category model
 const categorySchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
-    description: { type: String, maxlength: 200 },
+    description: { type: String, maxlength: 200, required: true },
     slug: { type: String, unique: true },
 }, 
 { timestamps: true } // Info such as created at
