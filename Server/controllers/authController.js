@@ -86,6 +86,19 @@ exports.getProfile = async (req, res) => {
     }
 };
 
+// Get profile by id
+exports.getProfileById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        if(!user) {
+            return res.status(404).json({message: "User not found"})
+        }
+        res.status(200).json({message: "User fetched successfully"})
+    } catch (error) {
+        res.status(500).json({message: "Error fetching user", error: error.message})
+    }
+}
+
 // Update user profile
 exports.updateProfile = async (req, res) => {
     try {

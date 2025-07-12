@@ -21,9 +21,20 @@ exports.protect = (res, req, next) => {
     
 };
 
+// middleware/authorize.js
 exports.authorize = (roles) => {
     return (req, res, next) => {
-        if(!roles.includes(req.user.role)) return res.status(403).json({message: "Forbidden"});
-        next;
-    }
-}
+        // Ensure req.user exists and has a role
+        if (!req.user || !req.user.role) {
+            return res.status(401).json({ message: "Unauthorized: User not authenticated or role missing" });
+        }
+
+        // Check if the authenticated user's role is included in the allowed roles array
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
+        }
+
+        // If authorized, proceed to the next middleware/route handler
+        next(); // Call next() to pass control
+    };
+};
