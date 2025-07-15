@@ -3,9 +3,12 @@ const morgan = require('morgan'); // HTTP request logger middleware
 const path = require('path'); // Node.js utility for file paths
 const fs = require('fs'); // File system module
 
+// Define the path to the project root directory
+const projectRoot = process.cwd();
+
 // Create a writable stream for logging access logs to 'access.log' file in append mode
 const accessLogStream = fs.createWriteStream(
-    path.join(__dirname, 'access.log'),
+    path.join(projectRoot, 'access.log'),
     { flags: 'a' }
 );
 

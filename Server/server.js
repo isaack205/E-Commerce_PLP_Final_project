@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const logger = require('./middlewares/customLogger')
 const connectDB = require('./config/db');
+const path = require('path');
 
 // Import routes
 const authRouter = require('./routes/authRoute');
@@ -25,8 +26,11 @@ app.use(cors()); // Midddleware that establishes connection to frontend
 app.use(helmet()); // Security middleware
 app.use(logger); // Logging information
 
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 // Define API Routes endpoint
-app.use('/api/users', authRouter);
+app.use('/api/user', authRouter);
 app.use('/api/products', productRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/carts', cartRouter);

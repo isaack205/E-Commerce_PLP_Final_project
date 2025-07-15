@@ -1,5 +1,6 @@
 // Import 
 const { body, validationResult } = require('express-validator');
+const fs = require('fs'); // Import file system module for deleting files
 
 // Validate product creation
 exports.validateProductCreation = [
@@ -50,6 +51,12 @@ exports.validateProductCreation = [
     (req, res, next) => {
         const errors = validationResult(req)
         if(!errors.isEmpty) {
+            // If validation fails and a file was uploaded, delete it
+            if (req.file) {
+               fs.unlink(req.file.path, (err) => { // Use fs.unlink (async) 
+                    if (err) console.error('Error deleting uploaded file after validation error:', err);
+                });
+            }
             return res.status(400).json({success: false, message: "Validation error", error: errors.array()})
         }
         next(); // Go to next middleware

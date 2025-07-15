@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema({
         quantity: { type: Number, required: true, min: 1 }, // Quantity ordered
         price: { type: Number, required: true, min: 0 } // Price at order time
     }],
-    shippingAddress: { type: String, required: true }, // Shipping address
+    shippingAddress: { type: mongoose.Schema.Types.ObjectId, ref: 'Address', required: true }, // Shipping address
     status: { type: String, enum: ['pending', 'shipped', 'delivered', 'paid'], default: 'pending' }, // Order status
     totalAmount: { type: Number, required: true, min: 0 }, // Total price
     paid: { type: Boolean, default: false }, // Payment status

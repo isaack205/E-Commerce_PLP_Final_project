@@ -11,13 +11,13 @@ router.post('/', protect, authorize(['admin', 'manager']), createShipping);
 router.get('/', protect, authorize(['admin', 'manager']), getAllShippings);
 
 // Get a single shipping record by ID
-router.get('/:id', authorize(['admin', 'manager', 'courier']), getShippingById);
+router.get('/:id', protect, authorize(['admin', 'manager', 'courier']), getShippingById);
 
 // Get shipping record by order ID
 router.get('/order/:orderId', protect, authorize(['customer', 'admin', 'manager', 'courier']), getShippingByOrderId);
 
 // Update a shipping record (e.g., status, tracking number, typically manager/courier/admin)
-router.put('/:id', protect, authorize(['admin', 'manager', 'courier']), updateShipping);
+router.patch('/:id', protect, authorize(['admin', 'manager', 'courier']), updateShipping);
 
 // Delete a shipping record (typically admin access)
 router.delete('/:id', protect, authorize(['admin']), deleteShipping);

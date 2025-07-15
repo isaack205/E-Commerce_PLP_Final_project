@@ -2,7 +2,7 @@
 const jwt = require('jsonwebtoken');
 const jwt_secret = process.env.JWT_SECRET;
 
-exports.protect = (res, req, next) => {
+exports.protect = (req, res, next) => {
     // Authorization header request
     const authHeader = req.headers.authorization;
     // Check for the authorization header
