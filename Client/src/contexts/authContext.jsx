@@ -1,7 +1,7 @@
 // Imports
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authApi';
-import toast from 'sonner';
+import { toast } from 'sonner';
 
 // Create the auth context
 const AuthContext = createContext();
@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
                 localStorage.removeItem('user');
                 localStorage.removeItem('jwtToken');
                 setUser(null);
+                toast.error("Your session has expired. Please log in again.");
             })
             .finally(() => setLoading(false));
     } else {
@@ -113,6 +114,14 @@ export const AuthProvider = ({ children }) => {
         return user.role === roles;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <p className="text-lg text-gray-700">Loading authentication...</p>
+      </div>
+    );
+  }
 
   return(
     <AuthContext.Provider value={contextValue}>

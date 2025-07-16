@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeSlashIcon, EnvelopeIcon, UserIcon, LockClosedIcon } from "@heroicons/react/20/solid";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/authContext";
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -37,6 +37,8 @@ export default function RegisterPage() {
         setEmailError('');
         setPasswordError('');
         setConfirmPasswordError('');
+
+        let isValid = true;
 
         // --- FIRST NAME VALIDATION ---
         if (!firstname.trim()) { // .trim() to handle whitespace-only input
@@ -102,7 +104,7 @@ export default function RegisterPage() {
         }
 
         try {
-            await register({firstname, lastname, email, password, confirmPassword});
+            await register({firstname, lastname, username, email, password, confirmPassword});
             navigate('/'); // Redirect to homepage
         } catch (error) {
             setLoginError(err.response?.data?.message || 'Registration failed.');
@@ -112,11 +114,11 @@ export default function RegisterPage() {
     }
 
     return(
-        <div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Create Account!</CardTitle>
-                    <CardDescription>Join Urban Spree Mart</CardDescription>
+        <div className="h-screen flex items-center justify-center">
+            <Card className="max-w-md w-full space-y-4 bg-gradient-to-t from-primary- to-blue-400">
+                <CardHeader className="text-center">
+                    <CardTitle className="text-3xl font-bold">Create Account!</CardTitle>
+                    <CardDescription className="text-md">Join Urban Spree Mart</CardDescription>
                     {registerError && (
                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4" role="alert">
                             {registerError}
@@ -124,17 +126,20 @@ export default function RegisterPage() {
                     )}
                 </CardHeader>
                 <form onSubmit={handleSubmit}>
-                    <CardContent>
+                    <CardContent className="mt-4 mb-4">
                         {/* Firstname */}
                         <div className="grid gap-2">
-                            <Label htmlFor="firstname">First name</Label>
-                            <div>
-                                <UserIcon/>
+                            <Label htmlFor="firstname" className="text-md">First name</Label>
+                            <div className="relative mb-4">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                                    <UserIcon className="size-6"/>
+                                </div>
                                 <Input
                                     type="text"
                                     id="firstname"
                                     name="firstname"
                                     value={firstname}
+                                    className="input pl-10 border-black"
                                     placeholder="firstname"
                                     onChange={(e) => setFirstname(e.target.value)}
                                     required
@@ -145,13 +150,16 @@ export default function RegisterPage() {
 
                         {/* Lastname */}
                         <div className="grid gap-2">
-                            <Label htmlFor="lastname">Last Name</Label>
-                            <div>
-                                <UserIcon/>
+                            <Label htmlFor="lastname" className="text-md">Last Name</Label>
+                            <div className="relative mb-4">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                                    <UserIcon className="size-6"/>
+                                </div>
                                 <Input
                                     type="text"
                                     id="lastname"
                                     name="lastname"
+                                    className="input pl-10 border-black"
                                     value={lastname}
                                     placeholder="lastname"
                                     onChange={(e) => setLastname(e.target.value)}
@@ -162,14 +170,17 @@ export default function RegisterPage() {
 
                         {/* Username */}
                         <div className="grid gap-2">
-                            <Label htmlFor="lastname">Username</Label>
-                            <div>
-                                <UserIcon/>
+                            <Label htmlFor="lastname" className="text-md">Username</Label>
+                            <div className="relative mb-4">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                                    <UserIcon className="size-6"/>
+                                </div>
                                 <Input
                                     type="text"
                                     id="username"
                                     name="username"
                                     value={username}
+                                    className="input pl-10 border-black"
                                     placeholder="username"
                                     onChange={(e) => setUsername(e.target.value)}
                                     required
@@ -180,14 +191,17 @@ export default function RegisterPage() {
 
                         {/* Email */}
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email Address</Label>
-                            <div>
-                                <EnvelopeIcon/>
+                            <Label htmlFor="email" className="text-md">Email Address</Label>
+                            <div className="relative mb-4">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                                    <EnvelopeIcon className="size-6"/>
+                                </div>
                                 <Input
                                     type="email"
                                     id="email"
                                     name="email"
                                     value={email}
+                                    className="input pl-10 border-black"
                                     placeholder="you@example.com"
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -198,21 +212,24 @@ export default function RegisterPage() {
 
                         {/* Password */}
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <div>
-                                <LockClosedIcon/>
+                            <Label htmlFor="password" className="text-md">Password</Label>
+                            <div className="relative mb-4">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                                    <LockClosedIcon className="size-6"/>
+                                </div>
                                 <Input
                                     type={showPassword ? 'text' : 'password'}
                                     autoComplete="new-password"
                                     id="password"
                                     name="password"
+                                    className="input pl-10 border-black"
                                     value={password}
                                     placeholder="choose password"
-                                    onchange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                                <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center" onClick={() => setShowPassword(!showPassword)}>
                                     {
-                                        showPassword ? (<EyeSlashIcon />) : (<EyeIcon />)
+                                        showPassword ? (<EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600"/>) : (<EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600"/>)
                                     }
                                 </button>
                             </div>
@@ -221,36 +238,41 @@ export default function RegisterPage() {
 
                         {/* Confirm Password */}
                         <div className="grid gap-2">
-                            <Label htmlFor="confirmPassword">Confirm password</Label>
-                            <div>
-                                <LockClosedIcon/>
+                            <Label htmlFor="confirmPassword" className="text-md">Confirm password</Label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                                    <LockClosedIcon className="size-6"/>
+                                </div>
                                 <Input
                                     name="confirmPassword"
                                     type={showConfirmPassword ? 'text' : 'confirmPassword'}
                                     autoComplete="new-password"
                                     id="confirmPassword"
+                                    className="input pl-10 border-black"
                                     value={confirmPassword}
                                     placeholder="confirm password"
-                                    onchange={(e) => setConfirmPassword(e.target.value)}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
-                                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                     {
-                                        showConfirmPassword ? (<EyeSlashIcon />) : (<EyeIcon />)
+                                        showConfirmPassword ? (<EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600"/>) : (<EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600"/>)
                                     }
                                 </button>
                             </div>
                             {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>}
                         </div>
                     </CardContent>
-                    <CardFooter>
-                        <Button type="submit" disabled={loading}>
-                            {loading ? ' Creating account...' : 'Create account'}
-                        </Button>
+                    <CardFooter className="relative mb-10">
+                        <div className="absolute mr-6 mt-10 right-0">
+                            <Button type="submit" className="font-bold bg-blue-600 hover:bg-blue-800 cursor-pointer" disabled={loading}>
+                                {loading ? ' Creating account...' : 'Create account'}
+                            </Button>
+                        </div>
                     </CardFooter>
                 </form>
-                <p>
+                <p className="text-center">
                     Already have an account?{' '}
-                    <Link to="/login">
+                    <Link to="/login" className="underline hover:text-blue-600">
                         Log in here
                     </Link>
                 </p>

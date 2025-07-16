@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeSlashIcon, EnvelopeIcon, LockClosedIcon } from "@heroicons/react/20/solid";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/authContext";
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -62,29 +62,33 @@ export default function LoginPage() {
     }
 
     return(
-        <div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Welcome Back!</CardTitle>
-                    <CardDescription>Sign in to your account</CardDescription>
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <Card className="max-w-md w-full space-y-4 bg-gradient-to-t from-primary- to-blue-400">
+                <CardHeader className="text-center">
+                    <CardTitle className="font-bold text-3xl">Welcome Back!</CardTitle>
+                    <CardDescription className="text-md font-medium">Sign in to your account</CardDescription>
                     {loginError && (
                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4" role="alert">
                             {loginError}
                         </div>
                     )}
                 </CardHeader>
-                <form onSubmit={handleSubmit}>
-                    <CardContent>
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                    <CardContent className="mb-5">
                         {/* Email */}
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email Address</Label>
-                            <div>
-                                <EnvelopeIcon/>
+                        <div className="grid gap-2 mb-5">
+                            <Label htmlFor="email" className="text-md">Email Address</Label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <EnvelopeIcon className="size-5"/>
+                                </div>
                                 <Input
                                     type="email"
                                     id="email"
                                     name="email"
+                                    autoComplete="email"
                                     value={email}
+                                    className="input pl-10 border-black"
                                     placeholder="you@example.com"
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -95,36 +99,41 @@ export default function LoginPage() {
 
                         {/* Password */}
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <div>
-                                <LockClosedIcon/>
+                            <Label htmlFor="password" className="text-md">Password</Label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <LockClosedIcon className="size-5"/>
+                                </div>
                                 <Input
                                     type={showPassword ? 'text' : 'password'}
                                     autoComplete="current-password"
                                     id="password"
                                     name="password"
+                                    className="input pl-10 pr-10 border-black"
                                     value={password}
-                                    placeholder="**********"
-                                    onchange={(e) => setPassword(e.target.value)}
+                                    placeholder="Enter your password"
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                                <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center" onClick={() => setShowPassword(!showPassword)}>
                                     {
-                                        showPassword ? (<EyeSlashIcon />) : (<EyeIcon />)
+                                        showPassword ? (<EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />) : (<EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />)
                                     }
                                 </button>
                             </div>
                             {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
                         </div>
                     </CardContent>
-                    <CardFooter>
-                        <Button type="submit" disabled={loading}>
-                            {loading ? 'Logging in ...' : 'Log in'}
-                        </Button>
+                    <CardFooter className="relative mt-10">
+                        <div className="absolute right-0">
+                            <Button type="submit" disabled={loading} className="rounded text-md font-bold cursor-pointer p-4 bg-blue-600 hover:bg-blue-800 mr-6">
+                                {loading ? 'Logging in ...' : 'Log in'}
+                            </Button>
+                        </div>
                     </CardFooter>
                 </form>
-                <p>
+                <p className="text-center">
                     Don't have an account?{' '}
-                    <Link to="/register">
+                    <Link to="/register" className="underline hover:text-blue-600">
                         Register here
                     </Link>
                 </p>
