@@ -55,7 +55,7 @@ export default function LoginPage() {
             await login(email, password);
             navigate('/'); // Redirect to homepage
         } catch (error) {
-            setLoginError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            setLoginError(error.response?.data?.message || 'Login failed. Please check your credentials.');
         } finally {
             setLoading(false);
         }
@@ -67,13 +67,14 @@ export default function LoginPage() {
                 <CardHeader className="text-center">
                     <CardTitle className="font-bold text-3xl">Welcome Back!</CardTitle>
                     <CardDescription className="text-md font-medium">Sign in to your account</CardDescription>
+                    
+                </CardHeader>
+                <form className="space-y-6" onSubmit={handleSubmit}>
                     {loginError && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4" role="alert">
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4 text-center" role="alert">
                             {loginError}
                         </div>
                     )}
-                </CardHeader>
-                <form className="space-y-6" onSubmit={handleSubmit}>
                     <CardContent className="mb-5">
                         {/* Email */}
                         <div className="grid gap-2 mb-5">

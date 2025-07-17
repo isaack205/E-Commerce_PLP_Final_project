@@ -107,7 +107,7 @@ export default function RegisterPage() {
             await register({firstname, lastname, username, email, password, confirmPassword});
             navigate('/'); // Redirect to homepage
         } catch (error) {
-            setLoginError(err.response?.data?.message || 'Registration failed.');
+            setLoginError(error.response?.data?.message || 'Registration failed.');
         } finally {
             setLoading(false);
         }
@@ -115,7 +115,7 @@ export default function RegisterPage() {
 
     return(
         <div className="h-screen flex items-center justify-center">
-            <Card className="max-w-md w-full space-y-4 bg-gradient-to-t from-primary- to-blue-400">
+            <Card className="max-w-md w-full space-y-4 bg-gradient-to-t from-primary-50 to-blue-400">
                 <CardHeader className="text-center">
                     <CardTitle className="text-3xl font-bold">Create Account!</CardTitle>
                     <CardDescription className="text-md">Join Urban Spree Mart</CardDescription>

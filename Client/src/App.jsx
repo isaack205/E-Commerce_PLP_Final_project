@@ -10,6 +10,8 @@ import ProtectedRoute from './components/protectedRoute';
 // Import page components
 import LoginPage from './pages/auth/loginPage';
 import RegisterPage from './pages/auth/register';
+import ProductsPage from './pages/productsPage';
+import ProductDetailsPage from './pages/productDetailsPage';
 
 export default function App() {
     return (
@@ -21,11 +23,11 @@ export default function App() {
             <Layout>
                 <Routes>
 
-                    <Route path="/" element={<Navigate to="/login" replace />} /> 
+                    <Route path="/" element={<Navigate to="/products" replace />} /> 
                     {/* Public Routes */}
                     {/* <Route path="/" element={<HomePage />} />*/}
-                    {/* <Route path="/products" element={<ProductsPage />} />*/}
-                    {/* <Route path="/products/:id" element={<ProductDetailsPage />} />*/}
+                    <Route path="/products" element={<ProductsPage />} />
+                    <Route path="/products/:id" element={<ProductDetailsPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
 
