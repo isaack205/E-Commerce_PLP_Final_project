@@ -3,66 +3,88 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authApi';
 import { toast } from 'sonner';
 
-// Create the auth context
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
-// Custom hook to use the authContext
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if(!context) {
+    if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
 };
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Stores user data
-  const [loading, setLoading] = useState(true); // Manages initial loading state
-  const [error, setError] = useState(null); // Stores authentication error
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
-    const userData = localStorage.getItem('user');
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem('jwtToken');
+      const storedUserString = localStorage.getItem('user'); // Keep this to potentially use for optimistic UI
 
-    if(token && userData) {
-        setUser(JSON.parse(userData));
-        authService.getProfile()
-            .then(response => {
-                setUser(response.data)
-                localStorage.setItem('user', JSON.stringify(response.data));
-            })
-            .catch(() => {
-                // Clear invalid data
-                localStorage.removeItem('user');
-                localStorage.removeItem('jwtToken');
-                setUser(null);
-                toast.error("Your session has expired. Please log in again.");
-            })
-            .finally(() => setLoading(false));
-    } else {
-        setLoading(false)
-    }
+      if (storedToken) { // Only proceed if a token exists
+        try {
+          // Optimistic update from localStorage while fetching fresh data
+          if (storedUserString) {
+            try {
+              const parsedStoredUser = JSON.parse(storedUserString);
+              // Check if the parsed user object has an _id or is nested
+              setUser(parsedStoredUser.user || parsedStoredUser); // Handle both direct and nested user objects
+            } catch (parseError) {
+              console.error("AuthContext: Error parsing stored user from localStorage:", parseError);
+              localStorage.removeItem('user'); // Clear corrupted data
+            }
+          }
+
+          // ALWAYS fetch fresh user data from the backend if a token exists.
+          const freshUserData = await authService.getProfile();
+          // Check if freshUserData is nested (e.g., { user: {...} }) or direct {...}
+          const actualUser = freshUserData.user || freshUserData;
+          setUser(actualUser); // Set user state with the actual user object
+          localStorage.setItem('user', JSON.stringify(actualUser)); // Store the actual user object
+
+        } catch (err) {
+          console.error("AuthContext: Authentication check failed (getProfile):", err);
+          localStorage.removeItem('jwtToken');
+          localStorage.removeItem('user');
+          setUser(null);
+          toast.error("Your session has expired. Please log in again.");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+        setUser(null);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (email, password) => {
     setLoading(true);
     setError(null);
     try {
-        const res = await authService.loginUser({ email, password })
-        const { token, ...userData } = res
-        setUser(userData)
-
+        const res = await authService.loginUser({ email, password });
+        // authService.loginUser already handles setting jwtToken and user in localStorage
+        const storedUserAfterLogin = localStorage.getItem('user');
+        if (storedUserAfterLogin) {
+            // Ensure the user object is correctly parsed and extracted if nested
+            const parsedUser = JSON.parse(storedUserAfterLogin);
+            setUser(parsedUser.user || parsedUser);
+        } else {
+            setUser(null);
+        }
         toast.success('Logged in successfully');
-        return { success: true }
-    } catch (error) {
-        const message = error.response?.data?.message || 'Login failed';
+        return { success: true };
+    } catch (err) {
+        const message = err.response?.data?.message || 'Login failed';
         setError(message);
-
         toast.error(message);
-        throw error
+        throw err;
     } finally {
-        setLoading(false)
+        setLoading(false);
     }
   };
 
@@ -70,27 +92,33 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-        const res = await authService.registerUser(userData)
-        const { token, ...newUserData } = res
-
-        setUser(newUserData);
+        const res = await authService.registerUser(userData);
+        // authService.registerUser already handles setting jwtToken and user in localStorage
+        const storedUserAfterRegister = localStorage.getItem('user');
+        if (storedUserAfterRegister) {
+            // Ensure the user object is correctly parsed and extracted if nested
+            const parsedUser = JSON.parse(storedUserAfterRegister);
+            setUser(parsedUser.user || parsedUser);
+        } else {
+            setUser(null);
+        }
         toast.success('Registered and logged in successfully');
-        return { success: true }
-    } catch (error) {
-        const message = error.response?.data?.message;
+        return { success: true };
+    } catch (err) {
+        const message = err.response?.data?.message || 'Registration failed';
         setError(message);
         toast.error(message);
-        throw error
+        throw err;
     } finally {
         setLoading(false);
     }
   };
 
   const logout = () => {
-    authService.logoutUser(); // Clear localStorage items
-    setUser(null); // Clear user state
-    setError(null); // Clear any existing errors
-    toast.success('Logged out successfully'); // Notify user
+    authService.logoutUser();
+    setUser(null);
+    setError(null);
+    toast.info('Logged out successfully');
   };
 
   const contextValue = {
@@ -100,18 +128,13 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    // Specific boolean flags for common checks
-    isAuthenticated: !!user, // Is any user logged in?
-    isAdmin: user?.role === 'admin', // Is the logged-in user an admin?
-    isManager: user?.role === 'manager', // Is the logged-in user a manager?
-
-    // Flexible function for dynamic role checking
+    isAuthenticated: !!user && !loading,
     hasRole: (roles) => {
-        if (!user || !user.role) return false;
-        if (Array.isArray(roles)) {
+      if (!user || !user.role) return false;
+      if (Array.isArray(roles)) {
         return roles.includes(user.role);
-        }
-        return user.role === roles;
+      }
+      return user.role === roles;
     }
   };
 
@@ -123,9 +146,9 @@ export const AuthProvider = ({ children }) => {
     );
   }
 
-  return(
+  return (
     <AuthContext.Provider value={contextValue}>
-        {children}
+      {children}
     </AuthContext.Provider>
-  )
+  );
 };

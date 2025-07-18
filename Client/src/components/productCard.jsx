@@ -26,7 +26,7 @@ export default function ProductCard({ product, onViewDetails }) {
 
         setAddingToCart(true); // Set loading state for the button
         try {
-            await cartService.addItemToCart(product._id, 1);
+            await cartService.createOrUpdateCart({items: [{ productId: product._id, quantity: 1 }]});
             toast.success(`${product.name} added to cart!`);
         } catch (error) {
             console.error('Error adding to cart:', error);

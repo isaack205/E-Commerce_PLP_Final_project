@@ -75,7 +75,7 @@ export default function ProductDetailsModal({ productId, onClose }) {
 
     setAddingToCart(true);
     try {
-      await cartService.addItemToCart(product._id, quantity);
+      await cartService.createOrUpdateCart({items: [{ productId: product._id, quantity: quantity }]});
       toast.success(`${quantity} x ${product.name} added to cart!`);
       onClose(); // Close modal after successful add to cart
     } catch (err) {

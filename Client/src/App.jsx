@@ -12,6 +12,7 @@ import LoginPage from './pages/auth/loginPage';
 import RegisterPage from './pages/auth/register';
 import ProductsPage from './pages/productsPage';
 import ProductDetailsPage from './pages/productDetailsPage';
+import CartPage from './pages/cartPage';
 
 export default function App() {
     return (
@@ -34,7 +35,7 @@ export default function App() {
                     {/* Protected Routes for Customers, Admins, Managers */}
                     {/* These routes require authentication and specific roles */}
                     <Route element={<ProtectedRoute allowedRoles={['customer', 'admin', 'manager']} />}>
-                        {/* <Route path="/cart" element={<CartPage />} />*/}
+                        <Route path="/carts" element={<CartPage />} />
                         {/* <Route path="/checkout" element={<CheckoutPage />} /> */}
                         {/* <Route path="/orders" element={<OrderHistoryPage />} />*/}
                     </Route>
