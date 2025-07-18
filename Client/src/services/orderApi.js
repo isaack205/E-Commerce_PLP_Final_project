@@ -8,10 +8,10 @@ export const orderService = {
      * Creates a new order from the authenticated user's cart.
      * @returns {Promise<Object>} The newly created order data.
      */
-    createOrder: async () => {
+    createOrder: async (orderData) => {
         try {
             // Backend route: POST /orders/
-            const res = await API.post('/orders');
+            const res = await API.post('/orders', orderData);
             return res.data;
         } catch (error) {
             console.error('Error creating order:', error.response?.data || error.message);

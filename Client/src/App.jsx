@@ -13,6 +13,7 @@ import RegisterPage from './pages/auth/register';
 import ProductsPage from './pages/productsPage';
 import ProductDetailsPage from './pages/productDetailsPage';
 import CartPage from './pages/cartPage';
+import CheckoutPage from './pages/checkoutPage';
 
 export default function App() {
     return (
@@ -36,7 +37,7 @@ export default function App() {
                     {/* These routes require authentication and specific roles */}
                     <Route element={<ProtectedRoute allowedRoles={['customer', 'admin', 'manager']} />}>
                         <Route path="/carts" element={<CartPage />} />
-                        {/* <Route path="/checkout" element={<CheckoutPage />} /> */}
+                        <Route path="/checkout" element={<CheckoutPage />} />
                         {/* <Route path="/orders" element={<OrderHistoryPage />} />*/}
                     </Route>
 

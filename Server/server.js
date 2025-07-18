@@ -22,6 +22,7 @@ const shippingRouter = require('./routes/shippingRoute');
 const app = express();
 
 app.use(express.json()); // Parse json bodies
+app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded request bodies
 app.use(cors()); // Midddleware that establishes connection to frontend
 app.use(helmet()); // Security middleware
 app.use(logger); // Logging information

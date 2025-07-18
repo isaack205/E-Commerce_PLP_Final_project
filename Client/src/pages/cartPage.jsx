@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'; // For quantity input
 import { toast } from 'sonner';
 import { TrashIcon } from '@heroicons/react/20/solid'; // For delete icon
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
   // Destructure 'loading' from useAuth as 'authLoading'
@@ -14,6 +14,7 @@ export default function CartPage() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true); // Internal loading state for cart fetch
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Function to fetch cart data
   const fetchCart = async () => {
@@ -253,7 +254,7 @@ export default function CartPage() {
             Clear Cart
           </Button>
           <Button
-            // onClick={() => navigate('/checkout')} // Uncomment when CheckoutPage is ready
+            onClick={() => navigate('/checkout')}
             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md"
           >
             Proceed to Checkout
