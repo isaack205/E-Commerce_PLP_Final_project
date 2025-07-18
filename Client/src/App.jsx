@@ -14,6 +14,8 @@ import ProductsPage from './pages/productsPage';
 import ProductDetailsPage from './pages/productDetailsPage';
 import CartPage from './pages/cartPage';
 import CheckoutPage from './pages/checkoutPage';
+import OrderHistoryPage from './pages/orderHistoryPage';
+import OrderDetailsPage from './pages/orderDetailsPage';
 
 export default function App() {
     return (
@@ -38,7 +40,8 @@ export default function App() {
                     <Route element={<ProtectedRoute allowedRoles={['customer', 'admin', 'manager']} />}>
                         <Route path="/carts" element={<CartPage />} />
                         <Route path="/checkout" element={<CheckoutPage />} />
-                        {/* <Route path="/orders" element={<OrderHistoryPage />} />*/}
+                        <Route path="/orders" element={<OrderHistoryPage />} />
+                        <Route path="/orders/:id" element={<OrderDetailsPage />} />
                     </Route>
 
                     {/* Protected Routes for Admins and Managers (Dashboard and related admin pages) */}
