@@ -31,7 +31,7 @@ export const productService = {
         // params can be used for pagination, filtering, etc. (e.g., { page: 1, limit: 10, category: 'electronics' })
         try {
             const res = await API.get('/products', { params });
-            return res.data;
+            return res.data.products || res.data;
         } catch (error) {
             console.error('Error fetching all products:', error.response?.data || error.message);
             throw error;
@@ -78,7 +78,7 @@ export const productService = {
     getProductsByCategory: async (categoryId, params = {}) => {
         try {
             const res = await API.get(`/products/category/${categoryId}`, { params });
-            return res.data;
+            return res.data.products || res.data;
         } catch (error) {
             console.error(`Error fetching products for category ID ${categoryId}:`, error.response?.data || error.message);
             throw error;

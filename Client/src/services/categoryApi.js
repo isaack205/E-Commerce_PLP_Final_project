@@ -19,7 +19,7 @@ export const categoryService = {
     getAllCategories: async () => {
         try {
             const res = await API.get('/categories');
-            return res.data;
+            return res.data.categories || res.data;
         } catch (error) {
             console.error('Error fetching all categories:', error.response?.data || error.message);
             throw error;

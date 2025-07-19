@@ -61,9 +61,6 @@ export default function ProductCard({ product, onViewDetails }) {
               {product.category.name || product.category}
             </h5>
         )}
-        {/* <h5>
-            {product.category}
-        </h5> */}
         <h3 className="text-xl font-semibold text-gray-800 mb-2 truncate">
             {product.name}
         </h3>

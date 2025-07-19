@@ -1,82 +1,107 @@
 // Imports
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { productService } from '../services/productApi';
+import { categoryService } from '../services/categoryApi';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
+import { useAuth } from '../contexts/authContext';
+import { cartService } from '../services/cartApi';
+
 import ProductCard from '../components/productCard';
-import { categoryService } from '@/services/categoryApi';
-import ProductDetailsModal from '../components/productDetailsModal'; // Import the modal component
-import { Link, useLocation } from 'react-router-dom';
+import ProductDetailsModal from '../components/productDetailsModal';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]); // NEW: State for categories
-  const [selectedCategory, setSelectedCategory] = useState(''); 
   const [error, setError] = useState(null);
-  const [selectedProductId, setSelectedProductId] = useState(null); // State to hold the ID of the product to show in modal
-
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all'); // Default to 'all' for "All Categories"
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Effect to fetch categories on initial load
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await categoryService.getAllCategories();
-        setCategories(response.categories || response.data || []); // Adjust based on actual API response
-      } catch (err) {
-        console.error('Error fetching categories:', err);
-        // Don't block product display if categories fail to load
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
+
+  const BACKEND_BASE_URL = 'http://localhost:5000'; // IMPORTANT: Replace with your actual backend URL
+
+  const fetchProducts = useCallback(async (categoryToFilter = 'all') => { // Renamed param for clarity
+    setLoading(true);
+    setError(null);
+    try {
+      let data;
+      if (categoryToFilter && categoryToFilter !== 'all') {
+        // Call the specific API endpoint for category filtering
+        data = await productService.getProductsByCategory(categoryToFilter); // <--- CRITICAL CHANGE HERE
+      } else {
+        // Call the general API endpoint for all products
+        data = await productService.getAllProducts(); // <--- CRITICAL CHANGE HERE
       }
-    };
-    fetchCategories();
+      setProducts(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch products.');
+      console.error('Error fetching products:', err);
+      toast.error('Failed to load products.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const data = await categoryService.getAllCategories();
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      toast.error('Failed to load categories.');
+    }
   }, []);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        let response;
+    fetchCategories();
+  }, [fetchCategories]);
 
-        // Check URL for initial category filter (e.g., /products?category=someId)
-        const queryParams = new URLSearchParams(location.search);
-        const categoryFromUrl = queryParams.get('category');
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const categoryFromUrl = queryParams.get('category') || 'all'; // Default to 'all'
+    
+    setSelectedCategory(categoryFromUrl);
+    fetchProducts(categoryFromUrl); // Pass the category to the fetch function
+  }, [location.search, fetchProducts]);
 
-        // Prioritize dropdown selection, then URL parameter
-        const categoryToFetch = selectedCategory || categoryFromUrl;
+  const handleCategoryChange = (value) => { // Value comes directly from Shadcn Select
+    setSelectedCategory(value);
+    const newSearchParams = new URLSearchParams();
 
-        if (categoryToFetch) {
-          // Fetch products by specific category
-          response = await productService.getProductsByCategory(categoryToFetch);
-        } else {
-          // Fetch all products
-          response = await productService.getAllProducts();
-        }
-        setProducts(response.products || response.data || []);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError(err.response?.data?.message || 'Failed to load products.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    // If a specific category is selected (not 'all'), add it to URL
+    if (value && value !== 'all') {
+      newSearchParams.set('category', value);
+    }
+    navigate(`/products?${newSearchParams.toString()}`);
+  };
 
-    fetchProducts();
-  }, [selectedCategory, location.search]);
+  const handleAddToCart = async (productId) => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to add items to your cart.');
+      navigate('/login');
+      return;
+    }
+    try {
+      await cartService.addItemToCart(user._id, productId, 1);
+      toast.success('Product added to cart!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to add to cart.');
+      console.error('Error adding to cart:', err);
+    }
+  };
 
-  // Function to open the modal with a specific product ID
   const openProductModal = (productId) => {
     setSelectedProductId(productId);
   };
 
-  // Function to close the modal
   const closeProductModal = () => {
     setSelectedProductId(null);
-  };
-
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-    // Optionally, update the URL to reflect the selected category for shareability
-    // navigate(`/products?category=${e.target.value}`);
   };
 
   if (loading) {
@@ -90,57 +115,48 @@ export default function ProductsPage() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-160px)] text-red-600">
-        <p className="text-lg">{error}</p>
-      </div>
-    );
-  }
-
-  if (products.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-160px)] text-gray-600">
-        <p className="text-lg">No products found.</p>
+        <p className="text-lg">Error: {error}</p>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Our Products</h1>
+      <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Our Products</h1>
 
       {/* Category Filter Dropdown */}
-      <div className="mb-8 flex justify-center">
-        <select
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          className="p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Categories</option>
-          {categories.map((category) => (
-            <option key={category._id} value={category._id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+      <div className="flex justify-center mb-8">
+        <div className="w-full sm:w-1/3 max-w-xs">
+          <Select onValueChange={handleCategoryChange} value={selectedCategory}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category._id} value={category._id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {products.length === 0 ? (
-        <div className="flex items-center justify-center min-h-[200px] text-gray-600">
-          <p className="text-lg">No products found for this category.</p>
-        </div>
+        <p className="text-center text-lg text-gray-700 dark:text-gray-300">No products found matching your criteria.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            // Pass the openProductModal function to ProductCard
             <ProductCard
               key={product._id}
               product={product}
-              onViewDetails={openProductModal} // New prop to handle modal opening
+              onViewDetails={openProductModal}
             />
           ))}
         </div>
-      )};
+      )}
 
-      {/* Conditionally render the ProductDetailsModal if selectedProductId is set */}
       {selectedProductId && (
         <ProductDetailsModal
           productId={selectedProductId}

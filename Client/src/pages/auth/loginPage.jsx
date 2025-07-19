@@ -52,8 +52,17 @@ export default function LoginPage() {
         }
 
         try {
-            await login(email, password);
-            navigate('/'); // Redirect to homepage
+            // await login(email, password);
+            // navigate('/'); // Redirect to homepage
+            const loginResult = await login(email, password); // This should update the user state in AuthContext
+            if (loginResult.success) {
+                const currentUser = JSON.parse(localStorage.getItem('user')); // Get user from localStorage or useAuth().user if updated immediately
+                if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'manager')) {
+                navigate('/'); // Redirect admins/managers to dashboard
+                } else {
+                navigate('/products'); // Redirect customers (and other roles) to products page
+                }
+            }
         } catch (error) {
             setLoginError(error.response?.data?.message || 'Login failed. Please check your credentials.');
         } finally {

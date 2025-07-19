@@ -23,6 +23,9 @@ import AddAddressPage from './pages/addAddressPage';
 import TrackShippingPage from './pages/trackShipping';
 import AboutPage from './pages/aboutPage';
 import ContactPage from './pages/contactPage';
+import DashboardPage from './pages/dashboard';
+import DashboardOverview from './pages/dasboard/dasboardOverview';
+import ProductManagementPage from './pages/dasboard/productManagementPage';
 
 export default function App() {
     return (
@@ -61,7 +64,16 @@ export default function App() {
                     {/* Protected Routes for Admins and Managers (Dashboard and related admin pages) */}
                     {/* These routes require authentication and 'admin' or 'manager' role */}
                     <Route element={<ProtectedRoute allowedRoles={['admin', 'manager']} />}>
-                        {/* <Route path="/dashboard" element={<DashboardPage />} />*/}
+                        {/* Ensure this outer Dashboard Route exists and wraps its children */}
+                        <Route path="/dashboard" element={<DashboardPage />}>
+                            {/* The index route for /dashboard */}
+                            <Route index element={<DashboardOverview />} />
+                            <Route path="products" element={<ProductManagementPage />} /> {/* <--- VERIFY THIS LINE */}
+                            {/* <Route path="orders" element={<OrderManagementPage />} /> */}
+                            {/* <Route path="users" element={<UserManagementPage />} /> */}
+                            {/* <Route path="categories" element={<CategoryManagementPage />} /> */}
+                            {/* <Route path="shipping" element={<ShippingManagementPage />} /> */}
+                        </Route>
                     </Route>
 
                     {/* Catch-all for undefined routes */}
