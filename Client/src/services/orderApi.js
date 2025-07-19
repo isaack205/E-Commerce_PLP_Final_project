@@ -27,7 +27,7 @@ export const orderService = {
     getAllOrders: async (params = {}) => {
         try {
             const res = await API.get('/orders', { params });
-            return res.data;
+            return res.data.orders || res.data;
         } catch (error) {
             console.error('Error fetching all orders (Admin/Manager):', error.response?.data || error.message);
             throw error;

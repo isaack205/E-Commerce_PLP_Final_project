@@ -26,6 +26,8 @@ import ContactPage from './pages/contactPage';
 import DashboardPage from './pages/dashboard';
 import DashboardOverview from './pages/dasboard/dasboardOverview';
 import ProductManagementPage from './pages/dasboard/productManagementPage';
+import AddressManagementPage from './pages/dasboard/addressManagementPage';
+import OrderManagementPage from './pages/dasboard/orderManagementPage';
 
 export default function App() {
     return (
@@ -68,8 +70,9 @@ export default function App() {
                         <Route path="/dashboard" element={<DashboardPage />}>
                             {/* The index route for /dashboard */}
                             <Route index element={<DashboardOverview />} />
-                            <Route path="products" element={<ProductManagementPage />} /> {/* <--- VERIFY THIS LINE */}
-                            {/* <Route path="orders" element={<OrderManagementPage />} /> */}
+                            <Route path="products" element={<ProductManagementPage />} />
+                            <Route path="addresses" element={<AddressManagementPage />} />
+                            <Route path="orders" element={<OrderManagementPage />} />
                             {/* <Route path="users" element={<UserManagementPage />} /> */}
                             {/* <Route path="categories" element={<CategoryManagementPage />} /> */}
                             {/* <Route path="shipping" element={<ShippingManagementPage />} /> */}
