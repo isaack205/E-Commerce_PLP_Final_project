@@ -37,14 +37,14 @@ export default function ProductCard({ product, onViewDetails }) {
     }
 
   // Determine the image URL for the product with a fallback default image
-  const imageUrl = product.image || `https://placehold.co/400x300/E0E0E0/333333?text=${encodeURIComponent(product.name || 'No Image')}`;
+  const BACKEND_BASE_URL = 'http://localhost:5000';
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <Link to={`/products/${product._id}`}>
         {/* 'onError': An event handler that runs if the image fails to load. */}
         <img
-          src={imageUrl}
+          src={`${BACKEND_BASE_URL}${product.image}`}
           alt={product.name}
           className="w-full h-48 object-cover"
           onError={(e) => {

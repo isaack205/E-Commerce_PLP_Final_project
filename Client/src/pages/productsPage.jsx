@@ -104,7 +104,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 px-4">
       <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Our Products</h1>
 
       {/* Category Filter Dropdown */}

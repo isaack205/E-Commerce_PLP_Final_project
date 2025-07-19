@@ -86,6 +86,8 @@ export default function ProductDetailsModal({ productId, onClose }) {
     }
   };
 
+  const BACKEND_BASE_URL = 'http://localhost:5000';
+
   return (
     // Overlay for the modal (darkens background, closes on click outside)
     <div className="fixed inset-0 bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -125,7 +127,7 @@ export default function ProductDetailsModal({ productId, onClose }) {
             {/* Product Image Section */}
             <div className="md:w-1/2 flex-shrink-0">
               <img
-                src={product.image || `https://placehold.co/600x400/E0E0E0/333333?text=${encodeURIComponent(product.name || 'No Image')}`}
+                src={`${BACKEND_BASE_URL}${product.image}`}
                 alt={product.name}
                 className="w-full h-auto max-h-96 object-contain rounded-lg border border-gray-200"
                 onError={(e) => {

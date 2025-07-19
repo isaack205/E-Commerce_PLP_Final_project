@@ -23,8 +23,16 @@ const app = express();
 
 app.use(express.json()); // Parse json bodies
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded request bodies
-app.use(cors()); // Midddleware that establishes connection to frontend
-app.use(helmet()); // Security middleware
+//app.use(cors()); // Midddleware that establishes connection to frontend
+app.use(cors({
+  origin: 'http://localhost:5173', // <--- IMPORTANT: Replace with your frontend's exact URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed HTTP methods
+  credentials: true, // Allow cookies, authorization headers, etc.
+}));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } // <--- CRITICAL CHANGE HERE
+}));
+//app.use(helmet()); // Security middleware
 app.use(logger); // Logging information
 
 // Serve static files from the 'uploads' directory

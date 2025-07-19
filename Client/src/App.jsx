@@ -16,6 +16,13 @@ import CartPage from './pages/cartPage';
 import CheckoutPage from './pages/checkoutPage';
 import OrderHistoryPage from './pages/orderHistoryPage';
 import OrderDetailsPage from './pages/orderDetailsPage';
+import UpdateProfilePage from './pages/updateProfilePage';
+import ChangePasswordPage from './pages/changePasswordPage';
+import ManageAddressesPage from './pages/manageAddressesPage';
+import AddAddressPage from './pages/addAddressPage';
+import TrackShippingPage from './pages/trackShipping';
+import AboutPage from './pages/aboutPage';
+import ContactPage from './pages/contactPage';
 
 export default function App() {
     return (
@@ -34,6 +41,8 @@ export default function App() {
                     <Route path="/products/:id" element={<ProductDetailsPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
 
                     {/* Protected Routes for Customers, Admins, Managers */}
                     {/* These routes require authentication and specific roles */}
@@ -42,6 +51,11 @@ export default function App() {
                         <Route path="/checkout" element={<CheckoutPage />} />
                         <Route path="/orders" element={<OrderHistoryPage />} />
                         <Route path="/orders/:id" element={<OrderDetailsPage />} />
+                        <Route path="/profile/update" element={<UpdateProfilePage />} />
+                        <Route path="/profile/change-password" element={<ChangePasswordPage />} />
+                        <Route path="/addresses" element={<ManageAddressesPage />} />
+                        <Route path="/addresses/add" element={<AddAddressPage />} />
+                        <Route path="/track-shipping" element={<TrackShippingPage />} />
                     </Route>
 
                     {/* Protected Routes for Admins and Managers (Dashboard and related admin pages) */}

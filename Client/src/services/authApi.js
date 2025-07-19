@@ -65,6 +65,16 @@ export const authService = {
         }
     },
 
+    changePassword: async (passwordData) => {
+        try {
+            const res = await API.put('/user/change-password', passwordData);
+            return res.data;
+        } catch (error) {
+            console.error('Error changing password:', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
     // Delete own user account (DELETE /user/me)
     deleteOwnUser: async () => {
         try {

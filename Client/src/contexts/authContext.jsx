@@ -1,5 +1,5 @@
 // Imports
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/authApi';
 import { toast } from 'sonner';
 
@@ -17,6 +17,14 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const updateUser = useCallback((newUserData) => {
+    // Ensure newUserData is the actual user object, not a nested one
+    const actualNewUser = newUserData.user || newUserData;
+    setUser(actualNewUser);
+    // Also update localStorage to keep it in sync
+    localStorage.setItem('user', JSON.stringify(actualNewUser));
+  }, []); // Empty dependency array means this function is stable and won't change on re-renders
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -128,6 +136,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
     isAuthenticated: !!user && !loading,
     hasRole: (roles) => {
       if (!user || !user.role) return false;

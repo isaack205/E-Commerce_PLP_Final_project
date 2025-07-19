@@ -191,61 +191,78 @@ export default function CartPage() {
     );
   }
 
+  const BACKEND_BASE_URL = 'http://localhost:5000';
+
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 px-4">
       <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Your Shopping Cart</h1>
 
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <div className="space-y-4">
           {cart.items.map((item) => (
-            <div key={item.product._id} className="flex items-center border-b pb-4 last:border-b-0 last:pb-0">
+            <div key={item.product._id} className="flex flex-col sm:flex-row items-center sm:items-start border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0 last:pb-0">
               <img
-                src={item.product.image || `https://placehold.co/100x100/E0E0E0/333333?text=${encodeURIComponent(item.product.name || 'Product')}`}
+                src={`${BACKEND_BASE_URL}${item.product.image}`}
                 alt={item.product.name}
                 className="w-24 h-24 object-cover rounded-md mr-4"
               />
-              <div className="flex-grow">
+              <div className="flex-grow text-center sm:text-left mb-4 sm:mb-0">
                 <Link to={`/products/${item.product._id}`} className="text-xl font-semibold text-gray-800 hover:text-blue-600">
                   {item.product.name}
                 </Link>
                 <p className="text-gray-600">Ksh {item.product.price.toFixed(2)} per item</p>
               </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
-                  disabled={item.quantity <= 1 || item.quantity >= item.product.stockQuantity} // Disable if 1 or max stock
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 p-2 rounded-md"
-                >
-                  -
-                </Button>
-                <Input
-                  type="number"
-                  value={item.quantity}
-                  onChange={(e) => handleQuantityChange(item.product._id, e.target.value)}
-                  className="w-16 text-center border rounded-md"
-                  min="1"
-                  max={item.product.stockQuantity} // Limit quantity by stock
-                />
-                <Button
-                  onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
-                  disabled={item.quantity >= item.product.stockQuantity}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 p-2 rounded-md"
-                >
-                  +
-                </Button>
-                <p className="text-lg font-semibold ml-4">Ksh {(item.product.price * item.quantity).toFixed(2)}</p>
+              <div className="flex flex-col items-center sm:items-end space-y-3 sm:ml-auto"> {/* Use flex-col for stacking on small screens */}
+                {/* Quantity Controls */}
+                <div className="flex items-center space-x-2 w-full justify-center sm:justify-end"> {/* Use space-x-2 for tighter buttons */}
+                  <Button
+                    onClick={() => handleUpdateQuantity(item.product._id, item.quantity - 1)}
+                    disabled={item.quantity <= 1} // Disable if 1
+                    variant="outline" // Use shadcn outline variant for better styling
+                    size="sm" // Use shadcn small size
+                    className="w-8 h-8 rounded-full p-0" // Tighter padding, full circle
+                  >
+                    -
+                  </Button>
+                  <Input
+                    type="number"
+                    value={item.quantity}
+                    onChange={(e) => handleUpdateQuantity(item.product._id, e.target.value)}
+                    className="w-16 text-center border rounded-md"
+                    min="1"
+                    max={item.product.stockQuantity} // Limit quantity by stock
+                  />
+                  <Button
+                    onClick={() => handleUpdateQuantity(item.product._id, item.quantity + 1)}
+                    disabled={item.quantity >= item.product.stockQuantity}
+                    variant="outline" // Use shadcn outline variant
+                    size="sm" // Use shadcn small size
+                    className="w-8 h-8 rounded-full p-0" // Tighter padding, full circle
+                  >
+                    +
+                  </Button>
+                </div>
+
+                {/* Item Total Price */}
+                <span className="text-xl font-bold text-gray-800 dark:text-gray-200 w-full text-center sm:text-right"> {/* Ensure it takes full width and aligns */}
+                  Ksh {(item.product.price * item.quantity).toFixed(2)}
+                </span>
+
+                {/* Remove Button */}
                 <Button
                   onClick={() => handleRemoveItem(item.product._id)}
-                  className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md ml-4"
+                  variant="destructive" // Use shadcn destructive variant
+                  size="sm" // Use shadcn small size
+                  className="w-full sm:w-auto px-4 py-2 text-sm" // Full width on small, auto on sm+
                 >
-                  <TrashIcon className="h-5 w-5" />
+                  <TrashIcon className="h-4 w-4 mr-1" /> Remove
                 </Button>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end items-center mt-6 pt-4 border-t">
+        <div className="flex flex-col items-center sm:items-end sm:ml-auto space-y-2">
           <h2 className="text-2xl font-bold text-gray-800 mr-4">Total: Ksh {calculateCartTotal().toFixed(2)}</h2>
           <Button
             onClick={handleClearCart}

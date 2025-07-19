@@ -20,16 +20,11 @@ function OrderHistoryPage() {
       try {
         setLoading(true);
         const response = await orderService.getOrdersByUserId(user._id);
-        const ordersArray = response.orders || response.data || response;
+        // This handles cases where the backend sends an object with an empty 'orders' array
+        const ordersData = response.orders || response.data;
+        const validOrders = Array.isArray(ordersData) ? ordersData.filter(addr => typeof addr._id === 'string' && addr._id.length > 0) : [];
 
-        // Ensure it's an array before setting state
-        if (Array.isArray(ordersArray)) {
-          setOrders(ordersArray);
-        } else {
-          console.error("OrderHistoryPage: API response for orders is not an array:", response);
-          setOrders([]); // Fallback to empty array on unexpected response
-          setError('Failed to load order history: Unexpected data format.');
-        }
+        setOrders(validOrders); // Always set to a valid array (could be empty)
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch order history.');
         console.error('Error fetching order history:', err);
