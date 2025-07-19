@@ -1,4 +1,4 @@
-// client/src/pages/OrderDetailsPage.jsx
+// Imports
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { orderService } from '../services/orderApi';

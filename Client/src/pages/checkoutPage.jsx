@@ -1,4 +1,4 @@
-// client/src/pages/CheckoutPage.jsx
+// Imports
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
@@ -12,12 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { paymentService } from '@/services/paymentApi';
 
-// This component does NOT accept triggerCartRefresh as a prop
+
 export default function CheckoutPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Local state for cart management, replacing CartContext
   const [cart, setCart] = useState(null);
   const [cartLoading, setCartLoading] = useState(true);
   const [cartError, setCartError] = useState(null);

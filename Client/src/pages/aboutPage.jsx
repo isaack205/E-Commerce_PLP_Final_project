@@ -1,4 +1,4 @@
-// client/src/pages/AboutPage.jsx
+// Imports
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBagIcon, StarIcon, ShieldCheckIcon, HeartIcon } from '@heroicons/react/24/outline';

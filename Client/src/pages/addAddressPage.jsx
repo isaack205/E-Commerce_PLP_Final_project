@@ -1,4 +1,4 @@
-// client/src/pages/AddAddressPage.jsx
+// Imports
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addressService } from '../services/addressApi';

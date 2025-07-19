@@ -1,4 +1,4 @@
-// client/src/pages/TrackShippingPage.jsx
+// Imports
 import React, { useState } from 'react';
 import { shippingService } from '../services/shippingApi';
 import { Input } from '@/components/ui/input';
