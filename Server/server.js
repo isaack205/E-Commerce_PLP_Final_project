@@ -24,10 +24,17 @@ const app = express();
 app.use(express.json()); // Parse json bodies
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded request bodies
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: (origin, cb) => {
+    if(!origin || allowedOrigins.includes(origin))
+      return cb(null, true)
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed HTTP methods
   credentials: true, // Allow cookies, authorization headers, etc.
 }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://e-commerce-plp-final-project.vercel.app/'
+]
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
