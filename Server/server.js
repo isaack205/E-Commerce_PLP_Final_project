@@ -27,30 +27,14 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://e-commerce-plp-final-project.vercel.app'
 ];
-
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Crucial for preflight
-    allowedHeaders: ['Content-Type', 'Authorization'], // Crucial for headers like JWT
-};
-
-// THIS MUST BE AT THE VERY TOP OF YOUR MIDDLEWARE CHAIN, before any routes or other parsers
-app.use(cors(corsOptions));
-// app.use(cors({
-//   origin: (origin, cb) => {
-//     if(!origin || allowedOrigins.includes(origin)) return cb(null, true);
-//   },
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
-//   credentials: true, // Allow cookies, authorization headers, etc.
-//   allowedHeaders: ['Content-Type, Authorization']
-// }));
+app.use(cors({
+  origin: (origin, cb) => {
+    if(!origin || allowedOrigins.includes(origin)) return cb(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed HTTP methods
+  credentials: true, // Allow cookies, authorization headers, etc.
+  allowedHeaders: ['Content-Type, Authorization']
+}));
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
