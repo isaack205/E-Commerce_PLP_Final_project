@@ -191,7 +191,7 @@ export default function CartPage() {
     );
   }
 
-  const BACKEND_BASE_URL = 'http://localhost:5000';
+  const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   return (
     <div className="container mx-auto py-8 px-4">
