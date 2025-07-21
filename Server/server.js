@@ -26,27 +26,31 @@ app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-enco
 const allowedOrigins = [
   'http://localhost:5173',
   'https://e-commerce-plp-final-project.vercel.app/'
-]
-app.use(cors({
-  origin: (origin, cb) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return cb(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return cb(new Error(msg), false);
+];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
         }
-        return cb(null, true);
     },
-    credentials: true, // Important if you're sending cookies or authorization headers
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow OPTIONS
-    allowedHeaders: ['Content-Type', 'Authorization'] // Specify headers your frontend sends
-  // origin: (origin, cb) => {
-  //   if(!origin || allowedOrigins.includes(origin)) return cb(null, true);
-  // },
-  // methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
-  // credentials: true, // Allow cookies, authorization headers, etc.
-  // allowedHeaders: ['Content-Type, Authorization']
-}));
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Crucial for preflight
+    allowedHeaders: ['Content-Type', 'Authorization'], // Crucial for headers like JWT
+};
+
+// THIS MUST BE AT THE VERY TOP OF YOUR MIDDLEWARE CHAIN, before any routes or other parsers
+app.use(cors(corsOptions));
+// app.use(cors({
+//   origin: (origin, cb) => {
+//     if(!origin || allowedOrigins.includes(origin)) return cb(null, true);
+//   },
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
+//   credentials: true, // Allow cookies, authorization headers, etc.
+//   allowedHeaders: ['Content-Type, Authorization']
+// }));
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
