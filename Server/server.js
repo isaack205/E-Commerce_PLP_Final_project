@@ -28,12 +28,24 @@ const allowedOrigins = [
   'https://e-commerce-plp-final-project.vercel.app/'
 ]
 app.use(cors({
-  origin: (origin, cb) => {
-    if(!origin || allowedOrigins.includes(origin)) return cb(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
-  credentials: true, // Allow cookies, authorization headers, etc.
-  allowedHeaders: ['Content-Type, Authorization']
+  origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true, // Important if you're sending cookies or authorization headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow OPTIONS
+    allowedHeaders: ['Content-Type', 'Authorization'] // Specify headers your frontend sends
+  // origin: (origin, cb) => {
+  //   if(!origin || allowedOrigins.includes(origin)) return cb(null, true);
+  // },
+  // methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
+  // credentials: true, // Allow cookies, authorization headers, etc.
+  // allowedHeaders: ['Content-Type, Authorization']
 }));
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
