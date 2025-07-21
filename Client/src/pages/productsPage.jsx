@@ -24,7 +24,7 @@ export default function ProductsPage() {
 
   const { isAuthenticated, user, loading: authLoading } = useAuth();
 
-  const BACKEND_BASE_URL = 'http://localhost:5000'; // IMPORTANT: Replace with your actual backend URL
+  const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL; // IMPORTANT: Replace with your actual backend URL
 
   const fetchProducts = useCallback(async (categoryToFilter = 'all') => { // Renamed param for clarity
     setLoading(true);

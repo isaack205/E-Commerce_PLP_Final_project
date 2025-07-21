@@ -86,7 +86,7 @@ export default function ProductDetailsModal({ productId, onClose }) {
     }
   };
 
-  const BACKEND_BASE_URL = 'http://localhost:5000';
+  const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   return (
     // Overlay for the modal (darkens background, closes on click outside)
