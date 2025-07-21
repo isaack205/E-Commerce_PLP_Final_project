@@ -25,7 +25,7 @@ app.use(express.json()); // Parse json bodies
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded request bodies
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://e-commerce-plp-final-project.vercel.app/'
+  'https://e-commerce-plp-final-project.vercel.app'
 ];
 
 const corsOptions = {
