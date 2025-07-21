@@ -191,7 +191,7 @@ export default function CartPage() {
     );
   }
 
-  const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const BACKEND_BASE_URL = import.meta.env.VITE_APP_UPLOAD_BASE_URL;
 
   return (
     <div className="container mx-auto py-8 px-4">

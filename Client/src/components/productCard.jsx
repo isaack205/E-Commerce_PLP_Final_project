@@ -37,7 +37,7 @@ export default function ProductCard({ product, onViewDetails }) {
     }
 
   // Determine the image URL for the product with a fallback default image
-  const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const BACKEND_BASE_URL = import.meta.env.VITE_APP_UPLOAD_BASE_URL;
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
