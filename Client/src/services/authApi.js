@@ -88,10 +88,22 @@ export const authService = {
     },
 
     // Admin: Get all users (GET /user/users)
-    getAllUsers: async () => {
+    // getAllUsers: async () => {
+    //     try {
+    //         const res = await API.get('/user/users');
+    //         return res.data;
+    //     } catch (error) {
+    //         console.error('Error fetching all users (Admin):', error.response?.data || error.message);
+    //         throw error;
+    //     }
+    // },
+
+    getAllUsers: async (params = {}) => { // This is the correct version with params
         try {
-            const res = await API.get('/user/users');
-            return res.data;
+            const res = await API.get('/user/users', { params }); // Pass params to API.get
+            console.log("AuthService: Raw response data for getAllUsers:", res.data); // DEBUG LOG
+            // As per your backend, it returns { users: [...] }, so return the whole object
+            return res.data; // Return res.data (which is { users: [...] })
         } catch (error) {
             console.error('Error fetching all users (Admin):', error.response?.data || error.message);
             throw error;

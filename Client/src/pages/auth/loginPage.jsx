@@ -58,7 +58,7 @@ export default function LoginPage() {
             if (loginResult.success) {
                 const currentUser = JSON.parse(localStorage.getItem('user')); // Get user from localStorage or useAuth().user if updated immediately
                 if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'manager')) {
-                navigate('/'); // Redirect admins/managers to dashboard
+                navigate('/dashboard'); // Redirect admins/managers to dashboard
                 } else {
                 navigate('/products'); // Redirect customers (and other roles) to products page
                 }

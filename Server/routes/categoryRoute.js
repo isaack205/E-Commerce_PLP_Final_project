@@ -15,7 +15,7 @@ router.get('/', getAllCategories);
 router.get('/:id', getCategoryById);
 
 // Update category by id
-router.put(':id', protect, authorize(['admin', 'manager']), updateCategory);
+router.put('/:id', protect, authorize(['admin', 'manager']), updateCategory);
 
 // Delete category by id
 router.delete('/:id', protect, authorize(['admin', 'manager']), deleteCategoryById);

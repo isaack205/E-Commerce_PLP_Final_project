@@ -88,11 +88,11 @@ export default function DashboardOverview() {
   }
 
   return (
-    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-800 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Dashboard Overview</h1>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         <StatCard icon={UsersIcon} title="Total Users" value={stats.totalUsers} color="bg-blue-500" />
         <StatCard icon={NewspaperIcon} title="Total Products" value={stats.totalProducts} color="bg-green-500" />
         <StatCard icon={ShoppingCartIcon} title="Total Orders" value={stats.totalOrders} color="bg-yellow-500" />
@@ -173,12 +173,22 @@ export default function DashboardOverview() {
 }
 
 // Helper component for statistics cards
+// const StatCard = ({ icon: Icon, title, value, color }) => (
+//   <div className={`${color} text-white p-6 rounded-lg shadow-md flex items-center justify-between transform transition-transform duration-300 hover:scale-105`}>
+//     <div>
+//       <h3 className="text-lg font-medium">{title}</h3>
+//       <p className="text-3xl font-bold mt-1">{value}</p>
+//     </div>
+//     <Icon className="h-10 w-10 opacity-75" />
+//   </div>
+// );
+
 const StatCard = ({ icon: Icon, title, value, color }) => (
-  <div className={`${color} text-white p-6 rounded-lg shadow-md flex items-center justify-between transform transition-transform duration-300 hover:scale-105`}>
+  <div className={`${color} text-white p-4 md:p-6 rounded-lg shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-transform transform duration-300 hover:scale-105`}>
     <div>
-      <h3 className="text-lg font-medium">{title}</h3>
-      <p className="text-3xl font-bold mt-1">{value}</p>
+      <h3 className="text-base sm:text-lg font-medium">{title}</h3>
+      <p className="text-2xl sm:text-3xl font-bold mt-1">{value}</p>
     </div>
-    <Icon className="h-10 w-10 opacity-75" />
+    <Icon className="h-8 w-8 sm:h-10 sm:w-10 opacity-75" />
   </div>
 );
