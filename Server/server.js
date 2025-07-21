@@ -28,14 +28,14 @@ const allowedOrigins = [
   'https://e-commerce-plp-final-project.vercel.app/'
 ]
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: (origin, cb) => {
         // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+        if (!origin) return cb(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
             const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+            return cb(new Error(msg), false);
         }
-        return callback(null, true);
+        return cb(null, true);
     },
     credentials: true, // Important if you're sending cookies or authorization headers
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow OPTIONS
