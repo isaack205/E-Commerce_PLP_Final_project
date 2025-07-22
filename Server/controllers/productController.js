@@ -164,10 +164,6 @@ exports.createProduct = async (req, res) => {
         // req.file.location is common for multer-s3
         const imageUrl = req.file ? (req.file.path || req.file.location) : null; // Ensure req.file exists
 
-                console.log('BODY:', req.body);
-        console.log('FILE:', req.file);
-
-
         if (!imageUrl) {
             // Handle case where image upload failed or no image was provided but is required
             return res.status(400).json({ message: "Image upload failed or image is missing" });

@@ -9,41 +9,42 @@ import { TrashIcon } from '@heroicons/react/20/solid'; // For delete icon
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
-  // Destructure 'loading' from useAuth as 'authLoading'
   const { user, isAuthenticated, loading: authLoading } = useAuth();
-  const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true); // Internal loading state for cart fetch
+  const [cart, setCart] = useState({ items: [], total: 0 }); // Initialize cart as an object with an empty items array
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Function to fetch cart data
   const fetchCart = async () => {
-    // Wait for authLoading to be false
     if (authLoading) {
-      setLoading(true); // Keep internal loading true while auth is loading
+      setLoading(true);
       return;
     }
 
     if (!isAuthenticated || !user) {
       setLoading(false);
-      setCart(null); // Clear cart if not authenticated or user is null after auth loads
+      setCart({ items: [], total: 0 }); // Ensure cart is empty object if not authenticated
       return;
     }
 
     try {
-      setLoading(true); // Set loading for the cart fetch itself
+      setLoading(true);
       setError(null);
       const response = await cartService.getCartByUserId(user._id);
-      setCart(response);
+      // Ensure response has 'items' and 'total'
+      setCart({
+        items: Array.isArray(response.items) ? response.items : [],
+        total: response.total || 0
+      });
     } catch (err) {
       console.error('Error fetching cart:', err);
       setError(err.response?.data?.message || 'Failed to load cart.');
+      setCart({ items: [], total: 0 }); // Set to empty cart on error
     } finally {
-      setLoading(false); // Set internal loading to false after cart fetch attempt
+      setLoading(false);
     }
   };
 
-  // Effect to fetch cart data when component mounts or user/auth state changes
   useEffect(() => {
     fetchCart();
   }, [isAuthenticated, user, authLoading]);
@@ -55,16 +56,14 @@ export default function CartPage() {
     }
     newQuantity = parseInt(newQuantity);
     if (isNaN(newQuantity) || newQuantity < 1) {
-      newQuantity = 1; // Ensure quantity is at least 1
+      newQuantity = 1;
     }
 
-    // Find the current item to check stock before optimistic update
     const currentItem = cart.items.find(item => item.product._id === productId);
-    if (!currentItem) return; // Should not happen if productId is valid
+    if (!currentItem) return;
 
     if (newQuantity > currentItem.product.stockQuantity) {
         toast.error(`Cannot add more than available stock (${currentItem.product.stockQuantity}).`);
-        // Revert to current quantity if trying to exceed stock
         setCart(prevCart => ({
             ...prevCart,
             items: prevCart.items.map(item =>
@@ -74,21 +73,18 @@ export default function CartPage() {
         return;
     }
 
-    // Optimistically update UI
     const updatedItems = cart.items.map(item =>
       item.product._id === productId ? { ...item, quantity: newQuantity } : item
     );
     setCart(prevCart => ({ ...prevCart, items: updatedItems }));
 
     try {
-      // Pass an object { productId, quantity } to updateCartItemQuantity
       await cartService.updateCartItemQuantity({ productId, quantity: newQuantity });
       toast.success('Cart item quantity updated.');
     } catch (err) {
       console.error('Error updating quantity:', err);
       setError(err.response?.data?.message || 'Failed to update quantity.');
-      // Revert optimistic update if API call fails
-      fetchCart(); // Re-fetch the entire cart to ensure consistency
+      fetchCart();
       toast.error('Failed to update quantity.');
     }
   };
@@ -99,19 +95,16 @@ export default function CartPage() {
       return;
     }
 
-    // Optimistically remove item from UI
     const updatedItems = cart.items.filter(item => item.product._id !== productId);
     setCart(prevCart => ({ ...prevCart, items: updatedItems }));
 
     try {
-      // Pass an object { productId } to removeItemFromCart
       await cartService.removeItemFromCart({ productId: productId });
       toast.success('Item removed from cart.');
     } catch (err) {
       console.error('Error removing item:', err);
       setError(err.response?.data?.message || 'Failed to remove item.');
-      // Re-fetch cart to revert if API call fails
-      fetchCart(); // Re-fetch the entire cart to ensure consistency
+      fetchCart();
       toast.error('Failed to remove item.');
     }
   };
@@ -122,7 +115,7 @@ export default function CartPage() {
       return;
     }
 
-    if (cart && cart.items.length === 0) {
+    if (cart.items.length === 0) {
       toast.info('Your cart is already empty!');
       return;
     }
@@ -131,11 +124,10 @@ export default function CartPage() {
       return;
     }
 
-    setLoading(true); // Show loading while clearing
+    setLoading(true);
     try {
-      // Pass user._id to clearCart
       await cartService.clearCart(user._id);
-      setCart({ items: [], total: 0 }); // Set cart to empty in UI
+      setCart({ items: [], total: 0 });
       toast.success('Your cart has been cleared.');
     } catch (err) {
       console.error('Error clearing cart:', err);
@@ -147,14 +139,12 @@ export default function CartPage() {
   };
 
   const calculateCartTotal = () => {
-    if (!cart || !cart.items || cart.items.length === 0) {
+    if (!cart.items || cart.items.length === 0) {
       return 0;
     }
-    // Ensure item.product.price is used, as product is populated
     return cart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
   };
 
-  // Display loading indicator if authentication is still loading OR cart is loading
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-160px)]">
@@ -171,7 +161,6 @@ export default function CartPage() {
     );
   }
 
-  // If authLoading is false but user is not authenticated (meaning, not logged in)
   if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-160px)] text-gray-600">
@@ -180,7 +169,7 @@ export default function CartPage() {
     );
   }
 
-  if (!cart || cart.items.length === 0) {
+  if (cart.items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] text-gray-600">
         <p className="text-2xl font-semibold mb-4">Your cart is empty! 🛒</p>
@@ -210,48 +199,45 @@ export default function CartPage() {
                 </Link>
                 <p className="text-gray-600">Ksh {item.product.price.toFixed(2)} per item</p>
               </div>
-              <div className="flex flex-col items-center sm:items-end space-y-3 sm:ml-auto"> {/* Use flex-col for stacking on small screens */}
-                {/* Quantity Controls */}
-                <div className="flex items-center space-x-2 w-full justify-center sm:justify-end"> {/* Use space-x-2 for tighter buttons */}
+              <div className="flex flex-col items-center sm:items-end space-y-3 sm:ml-auto">
+                <div className="flex items-center space-x-2 w-full justify-center sm:justify-end">
                   <Button
-                    onClick={() => handleUpdateQuantity(item.product._id, item.quantity - 1)}
-                    disabled={item.quantity <= 1} // Disable if 1
-                    variant="outline" // Use shadcn outline variant for better styling
-                    size="sm" // Use shadcn small size
-                    className="w-8 h-8 rounded-full p-0" // Tighter padding, full circle
+                    onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
+                    disabled={item.quantity <= 1}
+                    variant="outline"
+                    size="sm"
+                    className="w-8 h-8 rounded-full p-0"
                   >
                     -
                   </Button>
                   <Input
                     type="number"
                     value={item.quantity}
-                    onChange={(e) => handleUpdateQuantity(item.product._id, e.target.value)}
+                    onChange={(e) => handleQuantityChange(item.product._id, e.target.value)}
                     className="w-16 text-center border rounded-md"
                     min="1"
-                    max={item.product.stockQuantity} // Limit quantity by stock
+                    max={item.product.stockQuantity}
                   />
                   <Button
-                    onClick={() => handleUpdateQuantity(item.product._id, item.quantity + 1)}
+                    onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
                     disabled={item.quantity >= item.product.stockQuantity}
-                    variant="outline" // Use shadcn outline variant
-                    size="sm" // Use shadcn small size
-                    className="w-8 h-8 rounded-full p-0" // Tighter padding, full circle
+                    variant="outline"
+                    size="sm"
+                    className="w-8 h-8 rounded-full p-0"
                   >
                     +
                   </Button>
                 </div>
 
-                {/* Item Total Price */}
-                <span className="text-xl font-bold text-gray-800 dark:text-gray-200 w-full text-center sm:text-right"> {/* Ensure it takes full width and aligns */}
+                <span className="text-xl font-bold text-gray-800 dark:text-gray-200 w-full text-center sm:text-right">
                   Ksh {(item.product.price * item.quantity).toFixed(2)}
                 </span>
 
-                {/* Remove Button */}
                 <Button
                   onClick={() => handleRemoveItem(item.product._id)}
-                  variant="destructive" // Use shadcn destructive variant
-                  size="sm" // Use shadcn small size
-                  className="w-full sm:w-auto px-4 py-2 text-sm" // Full width on small, auto on sm+
+                  variant="destructive"
+                  size="sm"
+                  className="w-full sm:w-auto px-4 py-2 text-sm"
                 >
                   <TrashIcon className="h-4 w-4 mr-1" /> Remove
                 </Button>
@@ -279,4 +265,3 @@ export default function CartPage() {
     </div>
   );
 }
-
