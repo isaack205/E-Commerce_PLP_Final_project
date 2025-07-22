@@ -1,11 +1,13 @@
 // Imports
 import axios from 'axios';
 
+const token = JSON.parse(localStorage.getItem('user'))?.token;
+
 // Create a base Axios instance
 const API = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL, // Your backend API base URL
     headers: {
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
     },
 });
 

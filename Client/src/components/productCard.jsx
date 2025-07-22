@@ -36,15 +36,12 @@ export default function ProductCard({ product, onViewDetails }) {
         }
     }
 
-  // Determine the image URL for the product with a fallback default image
-  const BACKEND_BASE_URL = import.meta.env.VITE_APP_UPLOAD_BASE_URL;
-
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <Link to={`/products/${product._id}`}>
         {/* 'onError': An event handler that runs if the image fails to load. */}
         <img
-          src={`${BACKEND_BASE_URL}${product.image}`}
+          src={product.image || `https://placehold.co/60x60/E0E0E0/333333?text=No+Img`}
           alt={product.name}
           className="w-full h-48 object-cover"
           onError={(e) => {

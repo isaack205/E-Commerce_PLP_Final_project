@@ -4,10 +4,10 @@ const router = express.Router();
 const { protect, authorize } = require('../middlewares/auth');
 const { validateProductCreation } = require('../middlewares/productValidation');
 const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, getProductsByCategory } = require('../controllers/productController');
-const upload = require('../middlewares/upload');
+const upload = require('../middlewares/uploadCloud');
 
 // Create product
-router.post('/', protect, authorize(['admin', 'manager']), validateProductCreation, upload.single('image'), createProduct);
+router.post('/', protect, authorize(['admin', 'manager']), upload.single('productImage'), validateProductCreation, createProduct);
 
 // Get products
 router.get('/', getAllProducts);
@@ -16,7 +16,7 @@ router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 
 // Update product by id
-router.put('/:id', protect, authorize(['admin', 'manager']), upload.single('image'), updateProduct);
+router.put('/:id', protect, authorize(['admin', 'manager']), upload.single('productImage'), updateProduct);
 
 // Delete product by id
 router.delete('/:id', protect, authorize(['admin', 'manager']), deleteProduct);

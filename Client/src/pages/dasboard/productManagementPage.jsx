@@ -50,14 +50,13 @@ export default function ProductManagementPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Define your backend base URL here for image display
-  const BACKEND_BASE_URL = 'http://localhost:5000'; // IMPORTANT: Match your backend URL
-
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await productService.getAllProducts();
+      // Backend now returns full Cloudinary URL directly in product.image
+      // And handles returning an empty array if no products found (200 OK)
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch products.');
@@ -99,14 +98,16 @@ export default function ProductManagementPage() {
       setProductFormData(prevState => ({
         ...prevState,
         image: file,
-        imageUrl: URL.createObjectURL(file) // Create a preview URL
+        imageUrl: URL.createObjectURL(file) // Create a preview URL for the new file
       }));
     } else {
       setProductFormData(prevState => ({
         ...prevState,
         image: null,
+        // If no new file selected, revert to the existing product's image URL
+        // product.image is already the full Cloudinary URL
         imageUrl: isEditing && currentProduct && currentProduct.image
-                    ? `${BACKEND_BASE_URL}${currentProduct.image}`
+                    ? currentProduct.image
                     : ''
       }));
     }
@@ -134,8 +135,9 @@ export default function ProductManagementPage() {
       category: product.category ? (product.category._id || product.category) : '',
       brand: product.brand || '',
       variant: product.variant || '',
-      image: null,
-      imageUrl: product.image ? `${BACKEND_BASE_URL}${product.image}` : ''
+      image: null, // Always null initially for editing, as user might upload new one
+      // Display current product image directly from its stored URL
+      imageUrl: product.image || ''
     });
     setIsModalOpen(true);
   };
@@ -158,7 +160,9 @@ export default function ProductManagementPage() {
       setIsSubmitting(false);
       return;
     }
-    if (!productFormData.image && !isEditing) {
+    // Check for image on new product creation only if a file isn't already selected for preview.
+    // The backend should return an error if no image is supplied and required.
+    if (!isEditing && !productFormData.image) {
       toast.error('Please select an image for the new product.');
       setIsSubmitting(false);
       return;
@@ -173,7 +177,8 @@ export default function ProductManagementPage() {
     formData.append('brand', productFormData.brand);
     formData.append('variant', productFormData.variant);
     if (productFormData.image) {
-      formData.append('image', productFormData.image); // <--- CRITICAL FIX: Changed 'file' back to 'image'
+      // THIS IS THE CRITICAL FIX: The field name MUST match Multer config on backend ('productImage')
+      formData.append('productImage', productFormData.image);
     }
 
     try {
@@ -185,7 +190,7 @@ export default function ProductManagementPage() {
         toast.success('Product created successfully!');
       }
       setIsModalOpen(false);
-      fetchProducts();
+      fetchProducts(); // Refetch to display updated list
     } catch (err) {
       toast.error(err.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} product.`);
       console.error(`Error ${isEditing ? 'updating' : 'creating'} product:`, err);
@@ -273,7 +278,8 @@ export default function ProductManagementPage() {
                 <tr key={product._id}>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <img
-                      src={product.image ? `${BACKEND_BASE_URL}${product.image}` : `https://placehold.co/60x60/E0E0E0/333333?text=No+Img`}
+                      // product.image is the full Cloudinary URL, no prefix needed
+                      src={product.image || `https://placehold.co/60x60/E0E0E0/333333?text=No+Img`}
                       alt={product.name}
                       className="h-10 w-10 rounded-md object-cover"
                       onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/60x60/E0E0E0/333333?text=No+Img`; }}
@@ -461,5 +467,3 @@ export default function ProductManagementPage() {
     </div>
   );
 }
-
-

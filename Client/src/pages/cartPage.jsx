@@ -191,8 +191,6 @@ export default function CartPage() {
     );
   }
 
-  const BACKEND_BASE_URL = import.meta.env.VITE_APP_UPLOAD_BASE_URL;
-
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Your Shopping Cart</h1>
@@ -202,7 +200,7 @@ export default function CartPage() {
           {cart.items.map((item) => (
             <div key={item.product._id} className="flex flex-col sm:flex-row items-center sm:items-start border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0 last:pb-0">
               <img
-                src={`${BACKEND_BASE_URL}${item.product.image}`}
+                src={item.product.image || `https://placehold.co/60x60/E0E0E0/333333?text=No+Img`}
                 alt={item.product.name}
                 className="w-24 h-24 object-cover rounded-md mr-4"
               />
