@@ -31,6 +31,7 @@ export default function CheckoutPage() {
   const [loadingAddresses, setLoadingAddresses] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
   const [addressFetchError, setAddressFetchError] = useState(null);
+  const [orderPlacedSuccessfully, setOrderPlacedSuccessfully] = useState(false);
 
   // Function to fetch cart data locally
   const fetchCart = useCallback(async () => {
@@ -94,16 +95,19 @@ export default function CheckoutPage() {
     }
   }, [isAuthenticated, user, authLoading, fetchCart]);
 
-  // Redirect if not authenticated or cart is empty
   useEffect(() => {
+    if (orderPlacedSuccessfully) {
+      return; // Do not redirect if order was just placed
+    }
+
     if (!authLoading && !isAuthenticated) {
       toast.error('Please log in to proceed to checkout.');
       navigate('/login');
     } else if (!authLoading && isAuthenticated && !cartLoading && (!cart || cart.items.length === 0)) {
       toast.info('Your cart is empty. Please add items before checking out.');
-      navigate('/cart');
+      navigate('/carts');
     }
-  }, [authLoading, isAuthenticated, cart, cartLoading, navigate]);
+  }, [authLoading, isAuthenticated, cart, cartLoading, navigate, orderPlacedSuccessfully]);
 
   const handleNewAddressChange = (e) => {
     setNewAddressData({ ...newAddressData, [e.target.name]: e.target.value });
@@ -125,7 +129,7 @@ export default function CheckoutPage() {
         setUserAddresses(prev => [...prev, newAddr]);
         setSelectedAddressId(newAddr._id);
         setShowNewAddressForm(false);
-        setNewAddressData({ addressLine1: '', addressLine2: '', street: '', city: '', state: '', postalCode: '', country: '' });
+        setNewAddressData({ addressLine1: '', addressLine2: '', street: '', city: '', postalCode: '', country: '' });
         toast.success('New address added successfully!');
       } else {
         toast.error('Failed to add new address: Invalid response from server.');
@@ -179,6 +183,7 @@ export default function CheckoutPage() {
 
       // After successful order creation/payment initiation, clear local cart state
       setCart({ items: [] }); // This clears the cart display on this page
+      setOrderPlacedSuccessfully(true);
 
       // Redirect to order history or a success page
       navigate(`/orders/${response.order._id}`); // Navigate to order details page
@@ -256,26 +261,17 @@ export default function CheckoutPage() {
                 <SelectContent>
                   {userAddresses.map((address) => (
                     <SelectItem key={address._id} value={address._id}>
-                      {/* FIX: Build address string more robustly to avoid ",,," */}
                       {[
                         address.addressLine1,
                         address.addressLine2,
                         address.street,
                         address.city,
-                        address.state,
                         address.postalCode,
                         address.country
                       ].filter(Boolean).join(', ')}
                     </SelectItem>
                   ))}
                 </SelectContent>
-                {/* <SelectContent>
-                  {userAddresses.map((address) => (
-                    <SelectItem key={address._id} value={address._id}>
-                      {address.addressLine1}, {address.addressLine2}, {address.street}, {address.city}, {address.postalCode}, {address.country}
-                    </SelectItem>
-                  ))}
-                </SelectContent> */}
               </Select>
             </div>
           )}

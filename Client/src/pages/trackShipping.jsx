@@ -54,7 +54,7 @@ export default function TrackShippingPage() {
             <Input
               id="trackingInput"
               type="text"
-              placeholder="Enter Order ID or Tracking Number"
+              placeholder="Enter Order ID or Tracking Number to track order"
               value={trackingInput}
               onChange={(e) => setTrackingInput(e.target.value)}
               className="mt-1 block w-full"
@@ -75,8 +75,8 @@ export default function TrackShippingPage() {
         {shippingDetails && (
           <div className="border-t pt-6 mt-6 space-y-4">
             <h2 className="text-2xl font-semibold text-gray-800">Shipping Information</h2>
-            <p className="text-gray-700"><span className="font-semibold">Order ID:</span> {shippingDetails.orderId || 'N/A'}</p>
-            <p className="text-gray-700"><span className="font-semibold">Tracking Number:</span> {shippingDetails.trackingNumber || 'N/A'}</p>
+            <p className="text-gray-700"><span className="font-semibold">Order ID:</span> {shippingDetails.shipping.order._id || 'N/A'}</p>
+            <p className="text-gray-700"><span className="font-semibold">Tracking Number:</span> {shippingDetails.shipping.trackingNumber || 'N/A'}</p>
             <p className="text-gray-700"><span className="font-semibold">Status:</span>
               <span className={`ml-2 px-3 py-1 rounded-full text-sm font-medium ${
                 shippingDetails.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -84,7 +84,7 @@ export default function TrackShippingPage() {
                 shippingDetails.status === 'delivered' ? 'bg-green-100 text-green-800' :
                 'bg-gray-100 text-gray-800'
               }`}>
-                {shippingDetails.status || 'N/A'}
+                {shippingDetails.shipping.status || 'N/A'}
               </span>
             </p>
             {shippingDetails.estimatedDeliveryDate && (
@@ -98,16 +98,15 @@ export default function TrackShippingPage() {
             )}
 
             <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-2">Shipping Address:</h3>
-            {shippingDetails.addressId ? ( // Assuming addressId is populated or linked to full address
-              <p className="text-gray-700">
-                {shippingDetails.addressId.addressLine1}
-                {shippingDetails.addressId.addressLine2 ? `, ${shippingDetails.addressId.addressLine2}` : ''}
-                {shippingDetails.addressId.street ? `, ${shippingDetails.addressId.street}` : ''}
-                {shippingDetails.addressId.city ? `, ${shippingDetails.addressId.city}` : ''}
-                {shippingDetails.addressId.state ? `, ${shippingDetails.addressId.state}` : ''}
-                {shippingDetails.addressId.postalCode ? `, ${shippingDetails.addressId.postalCode}` : ''}
-                {shippingDetails.addressId.country ? `, ${shippingDetails.addressId.country}` : ''}
-              </p>
+            {shippingDetails.shipping.address ? (
+              <div className="text-gray-700">
+                <p>{shippingDetails.shipping.address.addressLine1 || 'N/A'}</p>
+                <p>{shippingDetails.shipping.address.addressLine2 || 'N/A'}</p>
+                <p>{shippingDetails.shipping.address.street || 'N/A'}</p>
+                <p>{shippingDetails.shipping.address.city || 'N/A'}</p>
+                <p>{shippingDetails.shipping.address.postalCode || 'N/A'}</p>
+                <p>{shippingDetails.shipping.address.country || 'N/A'}</p>
+              </div>
             ) : (
               <p className="text-gray-600">Address details not available.</p>
             )}

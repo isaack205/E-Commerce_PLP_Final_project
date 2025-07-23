@@ -101,22 +101,6 @@ function OrderDetailsPage() {
             </p>
             <p className="text-gray-700 text-lg mb-2"><span className="font-semibold">Payment Method:</span> {order.paymentMethod || 'N/A'}</p>
           </div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Shipping Address:</h3>
-            {order.shippingAddress ? (
-              <p className="text-gray-700">
-                {order.shippingAddress.addressLine1}
-                {order.shippingAddress.addressLine2 ? `, ${order.shippingAddress.addressLine2}` : ''}
-                {order.shippingAddress.street ? `, ${order.shippingAddress.street}` : ''}
-                {order.shippingAddress.city ? `, ${order.shippingAddress.city}` : ''}
-                {order.shippingAddress.state ? `, ${order.shippingAddress.state}` : ''}
-                {order.shippingAddress.postalCode ? `, ${order.shippingAddress.postalCode}` : ''}
-                {order.shippingAddress.country ? `, ${order.shippingAddress.country}` : ''}
-              </p>
-            ) : (
-              <p className="text-gray-600">Address details not available.</p>
-            )}
-          </div>
         </div>
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4 border-t pt-4">Order Items:</h3>
@@ -124,12 +108,12 @@ function OrderDetailsPage() {
           {order.items.map((item) => (
             <div key={item._id} className="flex items-center border-b pb-4 last:border-b-0 last:pb-0">
               <img
-                src={item.productId?.image || `https://placehold.co/80x80/E0E0E0/333333?text=${encodeURIComponent(item.productId?.name || 'Product')}`}
-                alt={item.productId?.name || 'Product Image'}
+                src={item.product.image || `https://placehold.co/80x80/E0E0E0/333333?text=${encodeURIComponent(item.productId?.name || 'Product')}`}
+                alt={item.product.name || 'Product Image'}
                 className="w-20 h-20 object-cover rounded-md mr-4"
               />
               <div className="flex-grow">
-                <p className="text-lg font-semibold text-gray-800">{item.productId?.name || 'Unknown Product'}</p>
+                <p className="text-lg font-semibold text-gray-800">{item.product.name || 'Unknown Product'}</p>
                 <p className="text-gray-600">Quantity: {item.quantity}</p>
                 <p className="text-gray-600">Price: KES {item.price.toFixed(2)}</p>
               </div>

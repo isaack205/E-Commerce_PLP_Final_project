@@ -34,7 +34,7 @@ export default function DashboardOverview() {
 
         // Fetch Total Users
         const usersResponse = await authService.getAllUsers();
-        const totalUsers = Array.isArray(usersResponse) ? usersResponse.length : 0; // Ensure it's an array
+        const totalUsers = Array.isArray(usersResponse.users) ? usersResponse.users.length : 0; // Ensure it's an array
 
         // Fetch Total Products
         const productsResponse = await productService.getAllProducts();
@@ -171,17 +171,6 @@ export default function DashboardOverview() {
     </div>
   );
 }
-
-// Helper component for statistics cards
-// const StatCard = ({ icon: Icon, title, value, color }) => (
-//   <div className={`${color} text-white p-6 rounded-lg shadow-md flex items-center justify-between transform transition-transform duration-300 hover:scale-105`}>
-//     <div>
-//       <h3 className="text-lg font-medium">{title}</h3>
-//       <p className="text-3xl font-bold mt-1">{value}</p>
-//     </div>
-//     <Icon className="h-10 w-10 opacity-75" />
-//   </div>
-// );
 
 const StatCard = ({ icon: Icon, title, value, color }) => (
   <div className={`${color} text-white p-4 md:p-6 rounded-lg shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-transform transform duration-300 hover:scale-105`}>

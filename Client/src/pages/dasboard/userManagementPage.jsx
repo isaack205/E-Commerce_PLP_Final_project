@@ -284,10 +284,8 @@ export default function UserManagementPage() {
       if (role && role !== 'all') params.role = role;
       
       const data = await authService.getAllUsers(params); // `data` will be { users: [...] }
-      console.log("Frontend: Users fetched successfully:", data);
 
-      // CRITICAL FIX: Access the 'users' property from the data object
-      setUsers(Array.isArray(data.users) ? data.users : []); // <--- THIS IS THE FIX
+      setUsers(Array.isArray(data.users) ? data.users : []);
       
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch users.');
