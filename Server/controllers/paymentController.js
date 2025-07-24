@@ -121,14 +121,14 @@ exports.mpesaCallback = async (req, res) => {
             payment.transactionId = mpesaReceiptNumber; // Update to actual M-Pesa receipt
             payment.paidAt = new Date(transactionDate);
             payment.amount = amount; // Confirm amount
-            // You might want to store more details like phoneNumber, etc.
+            payment.phoneNumber = phoneNumber;
             await payment.save({ session });
 
             // Update the associated Order
             const order = await Order.findById(payment.order).session(session);
             if (order) {
                 order.paid = true;
-                order.status = 'paid'; // Or 'processing' if that's your next step
+                order.status = 'paid';
                 await order.save({ session });
                 console.log(`Order ${order._id} marked as paid.`);
             } else {
@@ -140,10 +140,9 @@ exports.mpesaCallback = async (req, res) => {
         } else {
             // Payment failed or was cancelled by user
             payment.status = 'failed';
-            payment.paidAt = new Date(); // Record failure time
-            // You might want to store resultDesc or other error details
+            payment.paidAt = new Date();
             await payment.save({ session });
-            await session.commitTransaction(); // Still commit the status update
+            await session.commitTransaction();
             session.endSession();
             res.status(200).json({ message: `M-Pesa payment failed: ${resultDesc}` });
         }

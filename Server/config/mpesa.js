@@ -8,6 +8,6 @@ module.exports = {
     shortcode: process.env.MPESA_SHORTCODE,
     callbackUrl: process.env.MPESA_CALLBACK_URL,
     // Base URLs for Daraja API
-    oauthUrl: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
-    stkPushUrl: 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+    oauthUrl: process.env.MPESA_OAUTH_URL,
+    stkPushUrl: process.env.MPESA_STK_PUSH_URL
 };
