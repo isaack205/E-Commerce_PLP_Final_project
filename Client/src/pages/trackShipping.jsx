@@ -87,7 +87,19 @@ export default function TrackShippingPage() {
                 {shippingDetails.shipping.status || 'N/A'}
               </span>
             </p>
-            {shippingDetails.estimatedDeliveryDate && (
+            <p className="text-gray-700">
+              <span className="font-semibold">Shipped At:</span>{' '}
+              {shippingDetails.shipping.shippedAt
+                ? new Date(shippingDetails.shipping.shippedAt).toLocaleDateString()
+                : 'N/A'}
+            </p>
+            <p className="text-gray-700">
+              <span className="font-semibold">Delivered At:</span>{' '}
+              {shippingDetails.shipping.deliveredAt
+                ? new Date(shippingDetails.shipping.deliveredAt).toLocaleDateString()
+                : 'N/A'}
+            </p>
+            {/* {shippingDetails.estimatedDeliveryDate && (
               <p className="text-gray-700"><span className="font-semibold">Estimated Delivery:</span> {new Date(shippingDetails.estimatedDeliveryDate).toLocaleDateString()}</p>
             )}
             {shippingDetails.carrier && (
@@ -95,7 +107,7 @@ export default function TrackShippingPage() {
             )}
             {shippingDetails.currentLocation && (
               <p className="text-gray-700"><span className="font-semibold">Current Location:</span> {shippingDetails.currentLocation}</p>
-            )}
+            )} */}
 
             <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-2">Shipping Address:</h3>
             {shippingDetails.shipping.address ? (
