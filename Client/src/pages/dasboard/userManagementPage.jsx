@@ -366,7 +366,6 @@ export default function UserManagementPage() {
       {/* Conditional rendering: Render table only if users array is not empty, otherwise show "No users found" */}
       {users.length > 0 ? (
         <>
-          <p style={{ color: 'green', fontWeight: 'bold' }}>DEBUG: Users array has {users.length} items. Table should render!</p> {/* DEBUG INDICATOR */}
           <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-lg shadow-sm">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-800">

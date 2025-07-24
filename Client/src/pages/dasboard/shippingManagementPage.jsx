@@ -59,8 +59,7 @@ export default function ShippingManagementPage() {
     setError(null);
     try {
       const data = await shippingService.getAllShippings();
-      console.log("ShippingManagementPage: Raw data from getAllShippings:", data); // Debug log
-      // CRITICAL FIX: Extract the 'shippings' array from the response object
+      // Extract the 'shippings' array from the response object
       setShippingRecords(Array.isArray(data.shippings) ? data.shippings : []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch shipping records.');

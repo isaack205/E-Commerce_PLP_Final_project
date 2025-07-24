@@ -35,7 +35,6 @@ export default function OrderManagementPage() {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null); // For viewing details
-  // FIX: Initialize selectedStatus with a non-empty string for "All Statuses"
   const [selectedStatus, setSelectedStatus] = useState('all');
 
   const fetchOrders = useCallback(async (status = 'all') => { // Default to 'all'
@@ -43,7 +42,7 @@ export default function OrderManagementPage() {
     setError(null);
     try {
       const params = {};
-      // FIX: Only add status param if it's not 'all'
+      // Only add status param if it's not 'all'
       if (status && status !== 'all') params.status = status;
       const data = await orderService.getAllOrders(params); // Assuming getAllOrders can take status param
       setOrders(Array.isArray(data) ? data : []); // Ensure it's an array
@@ -181,7 +180,7 @@ export default function OrderManagementPage() {
                     </span>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                    {new Date(order.orderDate).toLocaleDateString()}
+                    {new Date(order.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Button
@@ -234,16 +233,16 @@ export default function OrderManagementPage() {
               <p><strong>Customer:</strong> {currentOrder.user ? (currentOrder.user.username || currentOrder.user.email || currentOrder.user._id) : 'N/A'}</p>
               <p><strong>Total Amount:</strong> Ksh {currentOrder.totalAmount ? currentOrder.totalAmount.toFixed(2) : '0.00'}</p>
               <p><strong>Status:</strong> <span className={`px-2 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getStatusColor(currentOrder.status)}`}>{currentOrder.status}</span></p>
-              <p><strong>Order Date:</strong> {new Date(currentOrder.orderDate).toLocaleString()}</p>
+              <p><strong>Order Date:</strong> {new Date(currentOrder.createdAt).toLocaleString()}</p>
               <p><strong>Payment Method:</strong> {currentOrder.paymentMethod || 'N/A'}</p>
               <p><strong>Shipping Address:</strong></p>
-              <div className="ml-4 border-l-2 pl-4 border-gray-200 dark:border-gray-700">
+              {/* <div className="ml-4 border-l-2 pl-4 border-gray-200 dark:border-gray-700">
                 <p>{currentOrder.shippingAddress?.addressLine1}</p>
                 {currentOrder.shippingAddress?.addressLine2 && <p>{currentOrder.shippingAddress.addressLine2}</p>}
                 <p>{currentOrder.shippingAddress?.city}, {currentOrder.shippingAddress?.stateProvince}</p>
                 <p>{currentOrder.shippingAddress?.postalCode}, {currentOrder.shippingAddress?.country}</p>
                 <p>Phone: {currentOrder.shippingAddress?.phoneNumber}</p>
-              </div>
+              </div> */}
 
               <h3 className="text-lg font-semibold mt-4 text-gray-800 dark:text-gray-100">Order Items:</h3>
               <div className="border rounded-md overflow-hidden dark:border-gray-700">

@@ -76,6 +76,7 @@ export default function App() {
                             <Route path="products" element={<ProductManagementPage />} />
                             <Route path="addresses" element={<AddressManagementPage />} />
                             <Route path="orders" element={<OrderManagementPage />} />
+                            <Route path="orders/:id" element={<OrderDetailsPage />} />
                             <Route path="users" element={<UserManagementPage />} />
                             <Route path="categories" element={<CategoryManagementPage />} />
                             <Route path="shipping" element={<ShippingManagementPage />} />
